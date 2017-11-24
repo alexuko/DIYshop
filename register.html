@@ -1,0 +1,36 @@
+<!DOCTYPE>
+<html>
+    <head>      <title> Register</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+        <script type="text/javascript" src="js/validation.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        
+    </head>
+	<body>
+     <div data-role="page" data-theme="b">
+            <div data-role="header" style="min-height: 45px;"><a href="welcome.php" class="ui-btn ui-btn-left ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+                <h1>Welcome To My Homepage</h1>
+            </div>
+          <div data-role="main" class="ui-content">     
+            <div>
+                <form action="reg_complete.php" method="POST" onsubmit ="return validate();">
+                    <input type="text" name="uname" data-clear-btn="true" placeholder="Name" required/><br>
+                    <input type="text" name="surname" data-clear-btn="true" placeholder="Surname" required/><br>
+                    <input type="text" name="address" data-clear-btn="true" placeholder="Address" required/><br>
+                    <input type="email" name="email" data-clear-btn="true" placeholder="E-mail" required/><br>
+                    <input type="tel" name="contact_number" data-clear-btn="true" placeholder="Phone" required/><br>
+                    <input type="text" name="username" data-clear-btn="true" placeholder="Username" required/><br>
+                    <input type="password" name="upassword" data-clear-btn="true" placeholder="Password" required/><br>
+                    <input type="submit" value="Submit !"/>
+                </form>    
+            </div>
+          </div>
+      </div>
+     
+    </body>
+</html>

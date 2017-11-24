@@ -1,0 +1,188 @@
+CREATE DATABASE tool;
+CREATE TABLE tool.users
+(
+id int NOT NULL AUTO_INCREMENT UNIQUE,
+uname VARCHAR(255),
+surname VARCHAR(255),
+address VARCHAR(255),
+email VARCHAR(255),
+contact_number VARCHAR(255),
+username VARCHAR(255)UNIQUE,
+upassword VARCHAR(255),
+type VARCHAR(255),
+CONSTRAINT user_pk PRIMARY KEY (id)
+);
+INSERT INTO `users` (`id`, `uname`, `surname`, `address`, `email`, `contact_number`, `username`, `upassword`, `type`)
+VALUES ('3', 'Anahi', 'Macias', 'Dublin 10', 'anahi_macias@macias.com', '0895127946', 'a_macias', '99999', 'Delivery');
+-------------------------------------ADMEN--------------------------------------
+      <?php
+   try{ 
+$host = 'localhost';
+$dbname='tool';
+$user='root';
+$pass='';
+try {
+    $conn =  new PDO("mysql:host=$host;dbname=$dbname",$user,$pass);
+    
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   
+    
+}catch(PDOException $e){
+    echo "Connection failed: " . $e->getMessage();
+    }
+    
+    $stmt = $conn->prepare("SELECT * FROM users");
+    $stmt->execute(); 
+    
+          
+    if ($stmt->rowCount() > 0) {
+    echo "<center><form name='execute' action='execute.php' method='POST' data-ajax='false'>
+            
+            <table><tr><th>ID</th>
+                       <th>Name</th>
+                       <th>Surname</th>
+                       <th>Address</th>
+                       <th>E-mail</th>
+                       <th>Contact Number</th>
+                       <th>Username</th>
+                       <th>Password</th>
+                       <th>Type</th>
+                       <th>Modify</th>
+                       <th>Delete</th>
+                       </tr>";
+       $cont= 0;
+    
+       while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+       
+        echo "<tr><td><input type='text' name='id[$cont]' value='".$row["id"]."'readonly/></td>
+                  <td><input type='text' name='name[$cont]' value='".$row["uname"]."'readonly/></td>
+                  <td><input type='text' name='surname[$cont]' value='".$row["surname"]."'readonly/></td>
+                  <td><input type='text' name='address[$cont]' value='".$row["address"]."'readonly/></td>
+                  <td><input type='text' name='email[$cont]' value='".$row["email"]."'readonly/></td>
+                  <td><input type='text' name='phone[$cont]' value='".$row["contact_number"]."'readonly/></td>
+                  <td><input type='text' name='username[$cont]' value='".$row["username"]."'readonly/></td>
+                  <td><select>
+                        <option name='password[$cont]' value='".$row["upassword"]."'>User-PW</option>
+                        <option value='12345678'>Reset</option>
+                      </select></td>
+                  <td><select>
+                        <option name='uType[$cont]' value='".$row["type"]."'>".$row["type"]."</option>
+                        <option value='Admin'>Admin</option>
+                        <option value='Staff'>Staff</option>
+                        <option value='D_staff'>D_staff</option>
+                        <option value='Customer'>Customer</option>
+                      </select></td>
+                  <td><input type='radio' name='opt[$cont]' id='modify'  value='modify".$row['id']."' multiple/></td>
+                  <td><input type='radio' name='opt[$cont]' id='delete'  value='delete".$row['id']."' multiple/></td>
+                  </tr>";
+                  $cont++;
+                  
+    }
+        echo  "</table><br><input type='submit' value='Apply Changes'/></form></center>";
+    
+    }else{echo "No Results Found";}    
+    }catch(PDOException $e) {echo $e;}  
+?>        
+-------------------------------------administrator2--------------------------------------
+<?php
+session_start();
+$_SESSION['type'] = 'Admin';
+$_SESSION['username']="admin";
+$id = '';
+include('connection.php');
+
+if (isset($_SESSION['type'])){
+    $userType = $_SESSION['type'];
+        if($userType != 'Admin'){
+           // header('location:welcome.html');
+        }else{
+            
+            if($_POST){
+                
+    
+                    $id= $_POST['id'];
+                    $password= $_POST['password'];
+                    $u_type= $_POST['type'];
+
+                        $q= $conn->prepare("UPDATE users SET upassword=:password, type=:type WHERE id=:id ");
+
+                            $q->bindValue(':password',$password);        
+                            $q->bindValue(':type',$u_type);
+                            $q->bindValue(':id',$id);
+                            $q->execute();
+
+                        echo "UPDATED";
+
+                    }else{
+                
+                include("admen.php");
+                
+            }
+            
+            
+            
+            
+            
+            
+        }
+}else{
+    
+    header('location: welcome.html');
+}
+?>
+---------------------------------------------------------cart-------------------------------------------
+<?php
+$_SESSION['itemsorder']=null;                
+echo "<h4>LIST ITEMS IN YOUR CART</h4>";       
+if($_GET){
+    $_SESSION['cart'] .= $_GET['id']."/" ;
+} 
+function getItemInfo($item){
+    // $id=$_GET['id'];
+include('connection.php');  
+    $id = $item;
+    $q = $conn->prepare("SELECT * FROM product WHERE p_id =:id");
+    $q->bindValue(':id', $id);
+    $q->execute();
+    $result = $q->fetch(PDO::FETCH_ASSOC);
+ $itemsorder = "Item ".$result['p_id']." ".$result['p_name']." £ ".$result['p_price']."<br>";
+ echo $itemsorder;
+     $_SESSION['itemsorder'] .= $itemsorder;
+}      
+    $items=$_SESSION['cart'];
+    $tok=explode("/",$items);
+        foreach($tok as $item){
+            if($item!=""){
+                        getItemInfo($item);
+              }
+    }
+                $_SESSION['cart']="";
+     echo "<a href='#page2.1' data-role='button' data-icon='plus' data-mini='true' data-ajax='false' >Place your Order!</a>";
+$_SESSION['cart']="";
+                ?>
+                ---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------->    
+    <div id="page2.1" data-role="page" data-theme="b">                
+<?php
+try{
+    include('connection.php');
+    $items=$_SESSION['itemsorder'];
+    $user_id=$_SESSION['id'];
+    
+    $q =$conn->prepare("INSERT INTO `order` (user_id, buying) VALUES (:user, :items)");
+    $q->bindValue(':user', $user_id);
+    $q->bindValue(':items', $items);
+    $q->execute();
+    echo "done";
+
+    echo "<a href='custumer.php#page1' data-role='button' data-inline='true' data-rel='back' data-theme='b' class='ui-link ui-btn ui-btn-a ui-btn-inline ui-shadow ui-corner-all' role='button' data-ajax='false' > return</a>";
+     
+         echo "<a href='customer.php' data-role='button' data-icon='plus' data-mini='true' data-ajax='false' >RETURN</a>";
+
+    
+    }catch(PDOException $e){echo $e;}
+
+?>
+</div>        
+----------------------------------------------------------------------------------------
+                    

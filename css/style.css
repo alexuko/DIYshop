@@ -1,0 +1,46 @@
+*{
+	margin:0;
+	padding:0;
+}
+
+.jumbotron{
+    margin-top: 5%;
+    background-color: #0f0d0b!important;
+    
+}
+.btn{
+	
+    padding:1em;
+    margin: 5% 5% 0% 23%;
+}
+
+.links{
+    color:white;
+    font-size: 120%;
+    font-family: monospace;
+}
+h1{
+    margin: 10px 10% 5% 10px;
+    text-align: center;
+    font-family:monospace;
+
+}
+p.collapsible_cont{
+   
+    font-size: 1.5em;
+    color: #c9a4a4;
+    text-align: center;
+    font-family: monospace;
+  
+    
+}
+
+.ui-btn-icon-top{
+    width: 49%;
+    display: inline-block;
+    
+}
+.page1_customer{
+    margin-top: 30px;
+}
+
